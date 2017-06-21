@@ -16,6 +16,11 @@ public class Column {
      * 列名称(字段名称)
      */
     private String name;
+
+    /**
+     * bean 名称
+     */
+    private String fieldName;
     /**
      * 是否主键
      */
@@ -129,5 +134,13 @@ public class Column {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 }

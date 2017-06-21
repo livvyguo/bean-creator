@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.Maps;
 import org.lvy.crobot.domain.Column;
 import org.lvy.crobot.domain.Table;
@@ -90,6 +91,8 @@ public class DBAnalysis {
                 col.setTableName(rsCols.getTableName(i));
                 String columnName = rsCols.getColumnName(i);
                 col.setName(columnName);
+                col.setFieldName(
+                    CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, columnName));
                 col.setType(rsCols.getColumnTypeName(i));
                 col.setPk(pks.contains(rsCols.getColumnName(i)));
                 col.setLength(rsCols.getColumnDisplaySize(i));
@@ -126,8 +129,9 @@ public class DBAnalysis {
      * @throws ClassNotFoundException
      */
     public static List<Table> collectAllTables(String connStr, String db, String username, String password) throws SQLException, ClassNotFoundException {
-        Connection conn = getConnection(connStr, db, username, password);
-        return collectAllTables(conn,db);
+        try(Connection conn = getConnection(connStr, db, username, password)) {
+            return collectAllTables(conn, db);
+        }
     }
 
     /**
