@@ -1,4 +1,1 @@
 id
-keyword
-search_count
-update_time

@@ -1,11 +1,11 @@
 {
-  "url": "jdbc:mysql://11.239.161.32:3306/ipright",
+  "url": "jdbc:mysql://localhost:3306/mydb",
   "username": "root",
   "password": "mysql",
   "tableList": [
-    "ipr_hotsearch_keyword"
+    "user"
   ],
-  "packageName": "com.youku.ipr.entity",
+  "packageName": "org.lvy",
   "useComment": true,
   "useLocalDate": false,
   "useLocalDateTime": false,
