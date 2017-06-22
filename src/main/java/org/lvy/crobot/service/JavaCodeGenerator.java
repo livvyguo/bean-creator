@@ -13,9 +13,13 @@ import javax.lang.model.element.Modifier;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Maps;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
@@ -27,9 +31,108 @@ import org.lvy.crobot.domain.Column;
  * @author guozheng
  * @date 2017/06/20
  */
-public class DomainService {
+public class JavaCodeGenerator {
 
     public static final String FOUR_SPACE = StringUtils.repeat(StringUtils.SPACE,4);
+
+    public static final String ORG_APACHE_IBATIS_ANNOTATIONS_PARAM
+        = "org.apache.ibatis.annotations.Param";
+
+    @NotNull
+    public static JavaFile getMapperJavaFile(String mapperSuffix, String tbName,
+                                              List<Column> columns, String pkgName,
+                                              String domainPkg) {
+        String entityName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tbName);
+        ClassName entityType = ClassName.get(domainPkg, entityName);
+
+        List<Column> ids = columns.stream().filter(c -> c.getPk()).collect(
+            Collectors.toList());
+
+        Builder builder = TypeSpec.interfaceBuilder(getMapperClassName(tbName, mapperSuffix))
+            .addJavadoc(
+                "@author: guozheng \n@date: $N \n",
+                LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
+            .addModifiers(Modifier.PUBLIC);
+
+        MethodSpec getById = generateAbstractGetById(entityType, ids);
+        MethodSpec selectByExample = generateAbstractSelectByExample(entityType, entityType,
+            CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, entityName));
+        MethodSpec update = generateAbstractUpdate(entityType,
+            CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, entityName));
+
+        builder.addMethod(getById);
+        builder.addMethod(selectByExample);
+        builder.addMethod(update);
+
+        return JavaFile
+            .builder(pkgName, builder.build())
+            .skipJavaLangImports(true)
+            .indent(FOUR_SPACE).build();
+    }
+
+    @NotNull
+    private static MethodSpec generateAbstractGetById(TypeName returnType, List<Column> parameterCols) {
+        List<ParameterSpec> parameterSpecs = parameterCols.stream()
+            .map(idCol ->
+                ParameterSpec.builder(
+                    Helper.getType(idCol.getColumnClass()),
+                    idCol.getFieldName())
+                    .addAnnotation(
+                        AnnotationSpec
+                            .builder(
+                                ClassName.bestGuess(ORG_APACHE_IBATIS_ANNOTATIONS_PARAM))
+                            .addMember("value", "$S", idCol.getFieldName())
+                            .build())
+                    .build())
+            .collect(Collectors.toList());
+
+        return MethodSpec.methodBuilder("getById")
+            .addJavadoc("根据ID查询\n")
+            .addParameters(parameterSpecs)
+            .returns(returnType)
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT).build();
+    }
+
+    @NotNull
+    private static MethodSpec generateAbstractSelectByExample(
+        TypeName returnType, TypeName paramType, String paramName) {
+        ParameterSpec parameterSpec = ParameterSpec
+            .builder(paramType, paramName)
+            .addAnnotation(AnnotationSpec
+                .builder(ClassName.bestGuess(ORG_APACHE_IBATIS_ANNOTATIONS_PARAM))
+                .addMember("value", "$S", paramName)
+                .build())
+            .build();
+
+        return MethodSpec.methodBuilder("selectByExample")
+            .addJavadoc("根据example条件查询\n")
+            .addParameter(parameterSpec)
+            .returns(ParameterizedTypeName.get(ClassName.get(List.class), returnType))
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT).build();
+    }
+
+    @NotNull
+    private static MethodSpec generateAbstractUpdate(TypeName paramType, String paramName) {
+        ParameterSpec parameterSpec = ParameterSpec
+            .builder(paramType, paramName)
+            .addAnnotation(AnnotationSpec
+                .builder(ClassName.bestGuess(ORG_APACHE_IBATIS_ANNOTATIONS_PARAM))
+                .addMember("value", "$S", paramName)
+                .build())
+            .build();
+
+        return MethodSpec.methodBuilder("update")
+            .addJavadoc("根据ID更新不为null的字段\n返回影响的行\n")
+            .addParameter(parameterSpec)
+            .returns(int.class)
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT).build();
+    }
+
+    private static String getMapperClassName(String tableName, String mapperSuffix) {
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName +"_"+
+            mapperSuffix);
+    }
 
     @NotNull
     public static JavaFile getJavaEntityFile(String tbName, List<Column> columns, String pkgName) {
@@ -115,7 +218,7 @@ public class DomainService {
             .collect(Collectors.toList());
     }
 
-    private static class Helper {
+    public static class Helper {
 
         public static final Class<?> getType(String typeName) {
             return RELATION.getOrDefault(typeName, byte[].class);

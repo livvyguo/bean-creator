@@ -1,21 +1,11 @@
 package org.lvy.crobot;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.lang.model.element.Modifier;
-
-import com.google.common.base.CaseFormat;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeSpec.Builder;
 import org.lvy.crobot.domain.Column;
 import org.lvy.crobot.domain.Table;
-import org.lvy.crobot.service.DomainService;
 import org.lvy.crobot.util.DBAnalysis;
 
 /**
@@ -30,7 +20,8 @@ public class Main {
 
     private static final String PASSWORD = "livvy";
 
-    private static final String PACKAGE_NAME = "org.lvy.domain";
+    private static final String DOMAIN_PACKAGE_NAME = "org.lvy.domain";
+    private static final String MAPPER_PACKAGE_NAME = "org.lvy.mapper";
 
 
     public static void main(String[] args) throws IOException {
@@ -43,21 +34,12 @@ public class Main {
                 String tbName = table.getName();
                 List<Column> columns = table.getColumns();
 
-                JavaFile javaFile = DomainService.getJavaEntityFile(tbName, columns,
-                    PACKAGE_NAME);
-                Builder builder = TypeSpec.interfaceBuilder(getMapperClassName(tbName, mapperSuffix))
-                    .addSuperinterface(Serializable.class)
-                    .addJavadoc(
-                        "@author: guozheng \n@date: $N \n",
-                        LocalDateTime.now().format(
-                            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
-                    .addModifiers(Modifier.PUBLIC);
-
-                System.out.println(javaFile.toJavaFileObject().getName());
-
-                //MethodSpec.methodBuilder("getById")
-
-                //MethodSpec.methodBuilder("getById").
+                //JavaFile mapperJavaFile = JavaCodeGenerator.getMapperJavaFile(mapperSuffix, tbName, columns,
+                //    MAPPER_PACKAGE_NAME, DOMAIN_PACKAGE_NAME);
+                //
+                ////String s = mapperJavaFile.toString();
+                ////System.out.println(s);
+                //mapperJavaFile.writeTo(Paths.get("."));
 
 
 
@@ -70,9 +52,5 @@ public class Main {
         }
     }
 
-    private static String getMapperClassName(String tableName, String mapperSuffix) {
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName +"_"+
-            mapperSuffix);
-    }
 
 }
