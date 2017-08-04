@@ -1,0 +1,34 @@
+<insert id="insert" >
+        INSERT INTO ${tableName}
+        (
+        <%
+        for(col in columns) {
+           if (colLP.last) {
+           %>
+            ${col.name}
+           <%
+           } else {
+           %>
+            ${col.name} ,
+           <%
+           }
+        }
+        %>
+        )
+        VALUES
+        (
+        <%
+        for(col in columns) {
+           if (colLP.last) {
+               %>
+            #{${col.fieldName}}
+               <%
+           } else {
+        %>
+            #{${col.fieldName}},
+        <%
+           }
+        }
+        %>
+         )
+</insert>

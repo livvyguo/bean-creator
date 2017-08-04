@@ -96,7 +96,7 @@ public class DBAnalysis {
                 col.setType(rsCols.getColumnTypeName(i));
                 col.setPk(pks.contains(rsCols.getColumnName(i)));
                 col.setLength(rsCols.getColumnDisplaySize(i));
-                col.setNull(rsCols.isNullable(i) == 0 ? false : true);
+                col.setNullVal(rsCols.isNullable(i) == 0 ? false : true);
                 col.setColumnClass(rsCols.getColumnClassName(i));
                 col.setColComment(fieldAndComment.get(columnName));
                 cols.add(col);

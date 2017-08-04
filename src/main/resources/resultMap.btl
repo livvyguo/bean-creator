@@ -1,0 +1,15 @@
+<resultMap id="${resultMapId}" type="${resultType}">
+<%
+for(col in columns) {
+   if (col.pk) {
+%>
+    <id property="${col.fieldName}" column="${col.name}"/>
+<%
+    } else {
+%>
+    <result property="${col.fieldName}" column="${col.name}"/>
+<%
+    }
+}
+%>
+</resultMap>

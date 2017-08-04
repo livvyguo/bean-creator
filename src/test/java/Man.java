@@ -46,6 +46,14 @@ public class Man {
     }
 
 
+    @Test
+    public void resultTemplate() throws IOException {
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader();
+        Configuration cfg = Configuration.defaultConfiguration();
+        GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
+        Template t = gt.getTemplate("/hello.txt");
+    }
+
 
     public static class User{
         private String name;

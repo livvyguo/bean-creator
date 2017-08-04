@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.youku.ipr.dao.IprAssessDao">
+    <resultMap id="iprAssessResult" type="com.youku.ipr.entity.IprAssess">
+        <id property="id" column="id"/>
+        <result property="ipId" column="ip_id"/>
+        <result property="assessType" column="assess_type"/>
+        <result property="urgencyLevel" column="urgency_level"/>
+        <result property="projectSparkle" column="project_sparkle"/>
+        <result property="ipSourceId" column="ip_source_id"/>
+        <result property="cooperateWays" column="cooperate_ways"/>
+        <result property="authStartDate" column="auth_start_date"/>
+        <result property="authEndDate" column="auth_end_date"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createDate" column="create_date"/>
+        <result property="applicationDate" column="application_date"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateDate" column="update_date"/>
+        <result property="assessStatus" column="assess_status"/>
+        <result property="chargeUserId" column="charge_user_id"/>
+        <result property="preChargeUserId" column="pre_charge_user_id"/>
+        <result property="chargeDate" column="charge_date"/>
+        <result property="completeDate" column="complete_date"/>
+        <result property="description" column="description"/>
+        <result property="originalLink" column="original_link"/>
+    </resultMap>
+
+    <resultMap id="iprAssessInfoResult" type="com.youku.ipr.entity.IprAssess" extends="iprAssessResult">
+        <association property="iprIp" resultMap="iprIpResult"/>
+        <association property="iprAssessConclusion" resultMap="iprAssessConclusionResult"/>
+    </resultMap>
+
+    <resultMap id="iprAssessConclusionResult" type="com.youku.ipr.entity.IprAssessConclusion">
+        <result property="id" column="tcon_id"/>
+        <result property="ipId" column="ip_id"/>
+        <result property="assessId" column="id"/>
+        <result property="partakeUserId" column="tcon_partake_user_id"/>
+        <result property="partakeUser" column="tcon_partake_user"/>
+        <result property="conclusion" column="tcon_conclusion"/>
+        <result property="score" column="tcon_score"/>
+        <result property="scoreLevel" column="tcon_score_level"/>
+        <result property="assessSummary" column="tcon_assess_summary"/>
+        <result property="projectIntroduce" column="tcon_project_introduce"/>
+        <result property="ipInfluence" column="tcon_ip_influence"/>
+        <result property="contentValues" column="tcon_content_values"/>
+        <result property="similarCompare" column="tcon_similar_compare"/>
+        <result property="feasibilityAssess" column="tcon_feasibility_assess"/>
+        <result property="extensionThink" column="tcon_extension_think"/>
+        <result property="submitStatus" column="tcon_submit_status"/>
+        <result property="submitDate" column="tcon_submit_date"/>
+        <result property="createUserId" column="tcon_create_user_id"/>
+        <result property="createDate" column="tcon_create_date"/>
+        <result property="updateDate" column="tcon_update_date"/>
+        <result property="description" column="tcon_description"/>
+    </resultMap>
+
+    <resultMap id="iprIpResult" type="com.youku.ipr.entity.ip.Ip">
+        <id property="id" column="tip_id"/>
+        <result property="name" column="tip_name"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO ipr_assess
+        (
+        ip_id,
+        assess_type,
+        urgency_level,
+        project_sparkle,
+        ip_source_id,
+        cooperate_ways,
+        auth_start_date,
+        auth_end_date,
+        create_user_id,
+        create_date,
+        application_date,
+        update_user_id,
+        update_date,
+        assess_status,
+        charge_user_id,
+        pre_charge_user_id,
+        charge_date,
+        complete_date,
+        description,
+        original_link
+        )
+        VALUES
+        (
+         #{ipId},
+         #{assessType},
+         #{urgencyLevel},
+         #{projectSparkle},
+         #{ipSourceId},
+         #{cooperateWays},
+         #{authStartDate},
+         #{authEndDate},
+         #{createUserId},
+         #{createDate},
+         #{applicationDate},
+         #{updateUserId},
+         #{updateDate},
+         #{assessStatus},
+         #{chargeUserId},
+         #{preChargeUserId},
+         #{chargeDate},
+         #{completeDate},
+         #{description},
+         #{originalLink}
+         )
+    </insert>
+
+    <update id="update">
+        UPDATE ipr_assess SET
+        <if test="ipId != null">
+        ip_id = #{ipId},
+        </if>
+        <if test="assessType != null">
+        assess_type = #{assessType},
+        </if>
+        <if test="urgencyLevel != null">
+        urgency_level = #{urgencyLevel},
+        </if>
+        <if test="projectSparkle != null">
+        project_sparkle = #{projectSparkle},
+        </if>
+        <if test="ipSourceId != null">
+        ip_source_id = #{ipSourceId},
+        </if>
+        <if test="cooperateWays != null">
+        cooperate_ways = #{cooperateWays},
+        </if>
+        <if test="authStartDate != null">
+        auth_start_date = #{authStartDate},
+        </if>
+        <if test="authEndDate != null">
+        auth_end_date = #{authEndDate},
+        </if>
+        <if test="applicationDate != null">
+        application_date = #{applicationDate},
+        </if>
+        <if test="updateUserId != null">
+        update_user_id = #{updateUserId},
+        </if>
+        <if test="assessStatus != null">
+        assess_status = #{assessStatus},
+        </if>
+        <if test="chargeUserId != null">
+        charge_user_id = #{chargeUserId},
+        </if>
+        <if test="preChargeUserId != null">
+        pre_charge_user_id = #{preChargeUserId},
+        </if>
+        <if test="chargeDate != null">
+        charge_date = #{chargeDate},
+        </if>
+        <if test="completeDate != null">
+        complete_date = #{completeDate},
+        </if>
+        <if test="description != null">
+        description = #{description},
+        </if>
+        <if test="originalLink != null">
+        original_link = #{originalLink},
+        </if>
+        update_date = now()
+        WHERE id = #{id}
+
+    </update>
+
+
+
+    <sql id="allField">
+        id, ip_id, assess_type, urgency_level, project_sparkle, ip_source_id, cooperate_ways, auth_start_date,
+        auth_end_date, create_user_id, create_date, application_date, update_user_id, update_date, assess_status,
+        charge_user_id, pre_charge_user_id, charge_date, complete_date, description, original_link
+    </sql>
+
+</mapper>

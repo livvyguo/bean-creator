@@ -1,0 +1,18 @@
+<update id="update">
+        UPDATE ${tableName} SET
+        <%
+        for(col in columns) {
+           if (col.pk) {
+           } else {
+        %>
+        <if test="${col.fieldName} != null">
+        ${col.name} = #{${col.fieldName}},
+        </if>
+        <%
+            }
+        }
+        %>
+        update_date = now()
+        WHERE id = #{id}
+
+</update>

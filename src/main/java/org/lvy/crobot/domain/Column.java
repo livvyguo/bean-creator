@@ -24,7 +24,7 @@ public class Column {
     /**
      * 是否主键
      */
-    private Boolean isPk;
+    private Boolean pk;
     /**
      * 默认值
      */
@@ -32,7 +32,7 @@ public class Column {
     /**
      * 是否为空
      */
-    private Boolean isNull;
+    private Boolean nullVal;
     /**
      * 数据类型
      */
@@ -68,11 +68,11 @@ public class Column {
     }
 
     public Boolean getPk() {
-        return isPk;
+        return pk;
     }
 
     public void setPk(Boolean pk) {
-        isPk = pk;
+        this.pk = pk;
     }
 
     public String getValue() {
@@ -83,12 +83,12 @@ public class Column {
         this.value = value;
     }
 
-    public Boolean getNull() {
-        return isNull;
+    public Boolean getNullVal() {
+        return nullVal;
     }
 
-    public void setNull(Boolean notNull) {
-        isNull = notNull;
+    public void setNullVal(Boolean notNull) {
+        this.nullVal = notNull;
     }
 
     public String getType() {

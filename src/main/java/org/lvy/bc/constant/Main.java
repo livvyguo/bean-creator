@@ -50,5 +50,14 @@ public class Main {
 
         System.out.println("------------------");
 
+        List<String> collect1 = lines.stream().map(l -> {
+            String fName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, l);
+            return String.format("<if test=\"%s != null\">%n %s = #{%s}, %n</if>",
+                fName, l, fName);
+        }).collect(Collectors.toList());
+
+        System.out.println(Joiner.on(System.getProperty("line.separator", "\n")).join(collect1));
+
+
     }
 }
